@@ -10,13 +10,14 @@ import { connect } from 'react-redux'
 import { addEntry } from '../actions'
 import { submitEntry, removeEntry } from '../utils/api'
 import { white, purple } from '../utils/colors'
+import { NavigationActions } from 'react-navigation'
 
 function SubmitBtn({ onPress }) {
     return (
         <TouchableOpacity
-            style={ Platform.OS === 'ios' ? styles.iosSubmitBtn : styles.androidSubmitBtn}
+            style={Platform.OS === 'ios' ? styles.iosSubmitBtn : styles.androidSubmitBtn}
             onPress={onPress}>
-            <Text style={ styles.submitBtnText }>SUBMIT</Text>
+            <Text style={styles.submitBtnText}>SUBMIT</Text>
         </TouchableOpacity>
     )
 }
@@ -78,7 +79,10 @@ class AddEntry extends Component {
 
         submitEntry({ key, entry })
 
+        this.toHome()
+
     }
+
 
     reset = () => {
         const key = timeToString()
@@ -89,6 +93,14 @@ class AddEntry extends Component {
 
         removeEntry(key)
 
+        this.toHome()
+
+    }
+
+    toHome = () => {
+        this.props.navigation.dispatch(NavigationActions.back({
+            key: 'AddEntry'
+        }))
     }
 
     render() {
@@ -96,18 +108,18 @@ class AddEntry extends Component {
 
         if (this.props.alreadyLogged) {
             return (
-                <View style={ styles.center }>
+                <View style={styles.center}>
                     <Ionicons
                         name={Platform.OS === 'ios' ? 'ios-happy' : 'md-happy'}
                         size={100} />
                     <Text>You already logged your information for today</Text>
-                    <TextButton onPress={this.reset} style={{ padding: 10}}>Reset</TextButton>
+                    <TextButton onPress={this.reset} style={{ padding: 10 }}>Reset</TextButton>
                 </View>
             )
         }
 
         return (
-            <View style={ styles.container }>
+            <View style={styles.container}>
                 <DateHeader date={(new Date()).toLocaleDateString()} />
                 {
                     Object.keys(metaInfo).map((key) => {
@@ -115,7 +127,7 @@ class AddEntry extends Component {
                         const value = this.state[key]
 
                         return (
-                            <View key={key} style={ styles.row }>
+                            <View key={key} style={styles.row}>
                                 {getIcon()}
                                 {type === 'slider'
                                     ? <UdaciSlider
@@ -146,12 +158,12 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: white
     },
-    row:{
+    row: {
         flexDirection: 'row',
         flex: 1,
         alignItems: 'center'
     },
-    iosSubmitBtn:{
+    iosSubmitBtn: {
         backgroundColor: purple,
         padding: 10,
         borderRadius: 7,
@@ -159,7 +171,7 @@ const styles = StyleSheet.create({
         marginLeft: 40,
         marginRight: 40,
     },
-    androidSubmitBtn:{
+    androidSubmitBtn: {
         backgroundColor: purple,
         padding: 10,
         paddingLeft: 30,
@@ -170,7 +182,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    submitBtnText:{
+    submitBtnText: {
         color: white,
         fontSize: 22,
         textAlign: 'center'
